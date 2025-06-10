@@ -1,44 +1,106 @@
 # my_budget_app
-My analysis of the provided files and the search results on README best practices is complete. I have a clear understanding of the project's functionality and the necessary components of a high-quality README file. I can now proceed to generate the README without further searches.
+個人財務記帳與視覺化分析工具 💰📊
+本專案是一個使用 Python Flask 開發的簡易個人財務記帳系統，結合支出分類與圖表視覺化，幫助使用者掌握日常收支狀況與支出結構。
 
-My Budget App
-A simple and intuitive web application to manage your personal income and expenses. Keep track of your financial transactions, set budget alerts, and visualize your spending habits with clear and insightful charts.
+專案目標
+提供使用者簡便的收入與支出記錄功能
 
-✨ Features
-Transaction Management: Easily add, edit, and delete your income and expense records.
-Categorization: Organize your transactions into predefined categories for better analysis (e.g., salary, food, transportation).
-Dynamic Balance Calculation: Your current balance is automatically updated with every transaction.
-Budget Alerts: Set a budget threshold to receive alerts when your balance falls below the specified amount.
-Data Visualization: Generate and view insightful charts to understand your spending patterns:
-Pie Chart: Shows the proportion of each expense category.
-Bar Chart: Compares the total amount spent in each category.
-Daily Expense Chart: Tracks your expenses on a daily basis.
-User-Friendly Interface: A clean and straightforward web interface for easy navigation and use.
-🚀 Getting Started
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+依支出類別自動分類並計算總額
 
-Prerequisites
-Python 3.x
-Flask
-Matplotlib
-Installation
-Clone the repository:
-Bash
+顯示分類支出圓餅圖與長條圖，幫助理解消費結構
 
-git clone https://github.com/your-username/my_budget_app.git
-cd my_budget_app
-Install the required packages:
-Bash
+顯示每日支出長條圖，掌握短期花費動態
 
-pip install Flask matplotlib
-Running the Application
-Start the Flask development server:
-Bash
+提供交易紀錄查詢與編輯功能
 
+專案結構
+
+project/
+│
+├── app.py                      # 主後端 Flask 程式
+├── templates/                  # HTML 模板
+│   ├── index.html              # 首頁：記帳與警戒線設定
+│   ├── chart.html              # 支出圖表頁
+│   └── transactions.html       # 交易紀錄頁面
+├── static/                     # 靜態檔案
+│   ├── pie.png                 # 圓餅圖（分類支出佔比）
+│   ├── bar.png                 # 長條圖（分類支出金額）
+│   └── daily.png               # 每日支出長條圖
+├── fonts/                      # 字體檔案
+│   └── NotoSansTC-Regular.ttf  # 中文字體支援
+
+安裝說明
+建議使用 Python 3.7 以上版本。
+
+安裝必備套件：
+pip install flask matplotlib
+啟動說明
+在專案根目錄執行：
 python app.py
-Open your web browser and navigate to:
+啟動 Flask 伺服器後，開啟瀏覽器輸入：
 http://127.0.0.1:5000/
-🛠️ Built With
-Flask - The web framework used
-Matplotlib - Used for generating charts
-HTML/CSS - For the front-end structure and styling
+即可進入應用程式首頁。
+
+功能介紹
+功能名稱	功能描述
+記帳輸入	使用者可新增收入或支出，並設定日期、分類與金額
+支出分類統計	系統依照支出分類自動計算每類別的總支出
+圓餅圖分析	顯示支出各分類比例，方便掌握消費結構
+長條圖分析	顯示各分類支出金額，直觀比較大小
+每日支出趨勢圖	以長條圖形式呈現每日總支出，了解花費走勢
+交易紀錄管理	可查詢所有交易紀錄，並可即時編輯或刪除資料
+預算警戒線	使用者可設定警戒金額，當餘額不足時頁面會顯示提醒
+
+使用流程示範
+新增交易
+
+於首頁選擇「收入」或「支出」
+
+選擇對應的分類
+
+輸入日期與金額
+
+點擊新增，交易資料會被記錄並更新餘額
+
+查詢與編輯
+
+點擊「📒 交易紀錄」進入交易列表
+
+可修改日期、分類、金額或刪除交易
+
+修改後會即時更新圖表數據
+
+查看圖表
+
+點擊「📊 支出圖表」可查看三種圖表：
+
+各分類支出圓餅圖
+
+各分類支出長條圖
+
+每日支出長條圖
+
+注意事項
+目前資料僅暫存在記憶體中，重啟程式將清空資料，後續可擴充資料庫支援。
+
+圖表中文字體需 fonts/NotoSansTC-Regular.ttf 支援中文顯示。
+
+若字體缺失，中文文字可能無法正常顯示。
+
+開發者
+作者：盧昕言
+聯絡方式：luhsinyen93@gmail.com
+
+授權條款
+本專案採用 MIT 授權，歡迎自由使用與修改。
+
+如果你需要，我可以幫你準備一份更詳細的教學文件或使用者手冊，也能協助將 README 美化排版。需要的話請告訴我！
+
+
+
+
+
+
+
+
+
