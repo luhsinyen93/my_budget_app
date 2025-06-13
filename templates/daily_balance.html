@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <title> 🕒 每日收支與帳戶淨值圖表 </title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", Arial, sans-serif;
+            max-width: 900px;
+            margin: auto;
+            padding: 1em;
+            background: #f0f2f5;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        img {
+            display: block;
+            margin: 1rem auto;
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <h1>🕒 每日收支淨值與帳戶淨值走勢圖</h1>
+    <img src="{{ url_for('static', filename='daily_balance.png') }}?v={{ random() }}" alt="每日收支與帳戶淨值圖" />
+</body>
+</html>

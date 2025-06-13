@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, url_for
 import budget_logic
 from budget_logic import plot_expense_charts
@@ -25,7 +26,6 @@ def index():
     selected_type = request.form.get('type')
     threshold_input = request.form.get('threshold')
     categories = []
-    
 
     # 如果提交 threshold，設定它
     if threshold_input:
@@ -58,11 +58,6 @@ def index():
                            income_categories=income_categories,
                            expense_categories=expense_categories,
                            today=today)
-
-
-
-
-
 
 @app.route('/add', methods=['POST'])
 def add():
@@ -105,14 +100,40 @@ def edit(index):
     budget_logic.edit_transaction(index, new_data)
     return redirect(url_for('index'))
 
-
-@app.route('/chart')
-def chart():
+@app.route('/pie')
+def pie():
     category_summary = budget_logic.get_category_summary()
     if not category_summary:
         return "目前沒有支出資料，無法繪圖"
     plot_expense_charts(category_summary)
-    return render_template('chart.html', random=lambda: random.randint(1, 1000000))
+    return render_template('pie.html', random=random.random)
+
+@app.route('/bar')
+def bar():
+    category_summary = budget_logic.get_category_summary()
+    if not category_summary:
+        return "目前沒有支出資料，無法繪圖"
+    plot_expense_charts(category_summary)
+    return render_template('bar.html', random=random.random)
+
+@app.route('/daily')
+def daily():
+    category_summary = budget_logic.get_category_summary()
+    if not category_summary:
+        return "目前沒有支出資料，無法繪圖"
+    plot_expense_charts(category_summary)
+    return render_template('daily.html', random=random.random)
+
+@app.route('/daily_balance')
+def daily_balance():
+    category_summary = budget_logic.get_category_summary()
+    if not category_summary:
+        return "目前沒有支出資料，無法繪圖"
+    
+    plot_expense_charts(category_summary)
+    return render_template('daily_balance.html', random=random.random)
+
+
 
 
 if __name__ == '__main__':

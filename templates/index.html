@@ -217,7 +217,12 @@
     </table>
 
     <br>
-    <p style="text-align: center;"><a href="{{ url_for('chart') }}">📊 查看支出圖表</a></p>
+    <p style="text-align: center;">
+        <a href="{{ url_for('pie') }}">🍕 支出圓餅圖</a> |
+        <a href="{{ url_for('bar') }}">📊 支出長條圖</a> |
+        <a href="{{ url_for('daily') }}">📅 每日支出圖</a> |
+        <a href="{{ url_for('daily_balance') }}">🕒 每日收支與帳戶淨值圖</a>
+    </p>
 
     <script>
         function setToday() {

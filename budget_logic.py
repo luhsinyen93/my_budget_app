@@ -229,35 +229,8 @@ def set_chinese_font():
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import os
-'''
-def set_chinese_font():
-    """
-    嘗試設定一個可完整支援 CJK 字的中文字體。
-    """
-    # 這些字體依照優先順序排序
-    possible_fonts = [
-        'PingFang TC',           # macOS 預設中文
-        'Hiragino Sans GB',      # macOS 支援簡中
-        'Heiti TC',              # macOS 舊版
-        'STHeiti',               # macOS 舊版
-        'Apple LiGothic Medium', # macOS 可用，支持部分繁中
-        'Arial Unicode MS',      # 廣泛支援 Unicode（但 macOS Catalina 以後預設不再內建）
-        'Noto Sans CJK TC',      # Google 開源，支援完整繁體字集
-        'Noto Sans TC',          # 新版命名，支援繁體
-    ]
 
-    available_fonts = [f.name for f in fm.fontManager.ttflist]
-
-    for font in possible_fonts:
-        if font in available_fonts:
-            plt.rcParams['font.sans-serif'] = [font]
-            print(f"✔ 使用字體: {font}")
-            return
-
-    print("⚠ 沒有找到完整中文字體，可能會有部分文字無法正確顯示。")
-'''
-
-def plot_expense_charts(category_summary, pie_path="static/pie.png", bar_path="static/bar.png", daily_path="static/daily.png"):
+def plot_expense_charts(category_summary, pie_path="static/pie.png", bar_path="static/bar.png", daily_path="static/daily.png", daily_balance_path="static/daily_balance.png"):
     """
     根據分類支出資料繪製圓餅圖和長條圖，並儲存為圖片檔案。
     """
@@ -283,23 +256,21 @@ def plot_expense_charts(category_summary, pie_path="static/pie.png", bar_path="s
         return False
 
     # === 圓餅圖 ===
-    plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(12, 12))
     plt.pie(category_expenses.values(), labels=category_expenses.keys(), autopct='%1.1f%%',
-            textprops={'fontsize': 24, 'fontproperties': font_prop})
-    plt.title('各分類支出佔比', fontsize=30, fontproperties=font_prop)
+            textprops={'fontsize': 30, 'fontproperties': font_prop})
     plt.axis('equal')
     plt.tight_layout()
     plt.savefig(pie_path)
     plt.close()
 
     # === 分類長條圖 ===
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(15, 9))
     plt.bar(category_expenses.keys(), category_expenses.values(), color='skyblue')
-    plt.xlabel('支出分類', fontsize=12, fontproperties=font_prop)
-    plt.ylabel('金額 (新台幣)', fontsize=12, fontproperties=font_prop)
-    plt.title('各分類支出金額', fontsize=30, fontproperties=font_prop)
-    plt.xticks(fontsize=10, fontproperties=font_prop)
-    plt.yticks(fontsize=10)
+    plt.xlabel('支出分類', fontsize=30, fontproperties=font_prop)
+    plt.ylabel('金額 (新台幣)', fontsize=30, fontproperties=font_prop)
+    plt.xticks(fontsize=20, fontproperties=font_prop)
+    plt.yticks(fontsize=20)
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.savefig(bar_path)
@@ -318,16 +289,72 @@ def plot_expense_charts(category_summary, pie_path="static/pie.png", bar_path="s
     sorted_dates = sorted(daily_expenses.keys())
     amounts = [daily_expenses[date] for date in sorted_dates]
 
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(15, 9))
     plt.bar(sorted_dates, amounts, color='salmon')
-    plt.xlabel('日期', fontsize=20, fontproperties=font_prop)
-    plt.ylabel('支出金額 (NT$)', fontsize=20, fontproperties=font_prop)
-    plt.title('每日支出金額', fontsize=30, fontproperties=font_prop)
-    plt.xticks(fontsize=10, fontproperties=font_prop)
-    plt.yticks(fontsize=10)
+    plt.xlabel('日期', fontsize=30, fontproperties=font_prop)
+    plt.ylabel('支出金額 (NT$)', fontsize=30, fontproperties=font_prop)
+    plt.xticks(fontsize=20, fontproperties=font_prop)
+    plt.yticks(fontsize=20)
     plt.grid(axis='y', linestyle='--', alpha=0.6)
     plt.tight_layout()
     plt.savefig(daily_path)
     plt.close()
 
+    """
+    繪製每日收支淨值長條圖與每日帳戶淨值折線圖，合併成一張圖並儲存。
+    """
+    # --- 先整理每日的收入與支出 ---
+    daily_income = defaultdict(int)
+    daily_expense = defaultdict(int)
+    for t in transactions:
+        if t["type"] == "收入":
+            daily_income[t["date"]] += t["amount"]
+        elif t["type"] == "支出":
+            daily_expense[t["date"]] += t["amount"]
+
+    # 取得所有日期，排序
+    all_dates = sorted(set(list(daily_income.keys()) + list(daily_expense.keys())))
+    if not all_dates:
+        print("沒有交易資料，無法生成每日收支淨值圖。")
+        return False
+
+    # 計算每日淨值 (收入 - 支出)
+    daily_net = [daily_income[d] - daily_expense[d] for d in all_dates]
+
+    # 計算每日帳戶淨值 (累積每日淨值)
+    cumulative_balance = []
+    running_total = 0
+    for net in daily_net:
+        running_total += net
+        cumulative_balance.append(running_total)
+
+    # --- 繪圖 ---
+    plt.figure(figsize=(18, 10))
+
+    # 使用雙軸，長條圖與折線圖共享X軸
+    ax1 = plt.gca()
+    ax2 = ax1.twinx()
+
+    # 字體設定
+    font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'NotoSansTC-Regular.ttf')
+    font_prop = fm.FontProperties(fname=font_path) if os.path.exists(font_path) else None
+
+    # 長條圖：每日收支淨值
+    bar_colors = ['green' if val >= 0 else 'red' for val in daily_net]
+    ax1.bar(all_dates, daily_net, color=bar_colors, alpha=0.7)
+    ax1.set_xlabel('日期', fontsize=30, fontproperties=font_prop)
+    ax1.set_ylabel('每日收支淨值 (NT$)', fontsize=30, fontproperties=font_prop)
+    ax1.grid(axis='y', linestyle='--', alpha=0.5)
+    ax1.tick_params(axis='x', labelsize=20) 
+    ax1.tick_params(axis='y', labelsize=20) 
+    # 折線圖：每日帳戶淨值
+    ax2.plot(all_dates, cumulative_balance, color='blue', marker='o', linewidth=2)
+    ax2.set_ylabel('每日帳戶淨值 (累積 NT$)', fontsize=30, fontproperties=font_prop)
+
+
+
+    plt.tight_layout()
+    plt.savefig(daily_balance_path)
+    plt.close()
     return True
+
